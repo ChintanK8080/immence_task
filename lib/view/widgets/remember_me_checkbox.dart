@@ -7,10 +7,11 @@ class RememberMeCheckBox extends StatefulWidget {
   const RememberMeCheckBox({
     super.key,
     required this.value,
-    required this.onChange,
+    required this.onChange, 
   });
   final bool value;
   final Function(bool value) onChange;
+ 
 
   @override
   State<RememberMeCheckBox> createState() => _RememberMeCheckBoxState();
