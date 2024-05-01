@@ -1,72 +1,84 @@
-import 'dart:async';
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:immence_task/models/users_provider.dart';
+import 'package:immence_task/view/home_page.dart';
+import 'package:immence_task/view/login_page.dart';
+import 'package:provider/provider.dart';
 
 class AuthProvider with ChangeNotifier {
-  User? user;
-  StreamSubscription<User?>? userAuthSub;
-
-  AuthProvider() {
-    userAuthSub = FirebaseAuth.instance.authStateChanges().listen((newUser) {
-      print('AuthProvider - FirebaseAuth - authStateChanges - $newUser');
-      user = newUser;
-      notifyListeners();
-    }, onError: (e) {
-      print('AuthProvider - FirebaseAuth - authStateChanges - $e');
-    });
-  }
-
-  @override
-  void dispose() {
-    if (userAuthSub != null) {
-      userAuthSub?.cancel();
-      userAuthSub = null;
-    }
-    super.dispose();
-  }
-
-  bool get isAnonymous {
-    assert(user != null);
-    bool isAnonymousUser = true;
-    for (UserInfo info in user!.providerData) {
-      if (info.providerId == "facebook.com" ||
-          info.providerId == "google.com" ||
-          info.providerId == "password") {
-        isAnonymousUser = false;
-        break;
-      }
-    }
-    return isAnonymousUser;
-  }
-
-  bool get isAuthenticated {
-    return user != null;
-  }
-
-  Future<UserCredential?> signInAnonymously() async {
-    return await FirebaseAuth.instance.signInAnonymously();
-  }
-
-  Future<void> signOut() async {
-    await FirebaseAuth.instance.signOut();
-  }
-
-  Future<UserCredential?> login(String email, String password) async {
+  Future<UserCredential?> createNewUser(
+      {required String email,
+      required String password,
+      required String phone,
+      required String name,
+      required BuildContext context,
+      required Function(String error) onError}) async {
     try {
-      final UserCredential credential =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final credential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      log(credential.credential?.providerId.toString() ?? "no id");
-      log(credential.additionalUserInfo.toString());
+      if (credential.user != null) {
+        if (name.trim().isNotEmpty ?? false) {
+          credential.user!.updateDisplayName(name.trim());
+        }
+      }
+      UserProvider userProvider = Provider.of<UserProvider>(context);
+      userProvider.storeUserData(email: email, phone: phone, name: name);
       return credential;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        onError('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        onError('The account already exists for that email.');
+      }
     } catch (e) {
-      // Handle login errors
-      print(e.toString());
-      return null;
+      onError(e.toString());
     }
+    return null;
+  }
+
+  login(
+      {required String email,
+      required String password,
+      required BuildContext context,
+      required Function(String error) onError}) async {
+    try {
+      final credential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      if (credential.user != null) {
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => const HomePage(),
+            ),
+            (route) => false);
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        onError(e.message ?? '');
+      } else if (e.code == 'wrong-password') {
+        onError(e.message ?? '');
+      } else if (e.code == "invalid-credential") {
+        onError(e.message ?? '');
+      } else if (e.code == "invalid-email") {
+        onError(e.message ?? '');
+      } else if (e.code == "user-disabled") {
+        onError(e.message ?? '');
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  logout(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => const LoginPage(),
+        ),
+        (route) => false);
   }
 }

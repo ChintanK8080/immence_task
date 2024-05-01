@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:immence_task/app_constants/app_colors.dart';
 import 'package:immence_task/app_constants/app_strings.dart';
 import 'package:immence_task/app_constants/app_text_style.dart';
+import 'package:immence_task/models/auth_provider.dart';
 import 'package:immence_task/view/signup_page.dart';
 import 'package:immence_task/view/widgets/custom_button.dart';
 import 'package:immence_task/view/widgets/custom_textfield.dart';
 import 'package:immence_task/view/widgets/remember_me_checkbox.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,6 +20,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool isChecked = false;
   bool isObsecure = true;
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   _notify([Function? function]) {
     if (mounted) {
@@ -30,6 +35,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -48,7 +54,8 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(
                 height: 25,
               ),
-              const CustomTextfield(
+              CustomTextfield(
+                controller: emailController,
                 text: AppStrings.email,
                 hintText: AppStrings.emailHint,
               ),
@@ -56,6 +63,7 @@ class _LoginPageState extends State<LoginPage> {
                 height: 12,
               ),
               CustomTextfield(
+                controller: passwordController,
                 text: AppStrings.password,
                 isObsecure: isObsecure,
                 hintText: AppStrings.passwordHint,
@@ -89,7 +97,19 @@ class _LoginPageState extends State<LoginPage> {
                 height: 28,
               ),
               Flexible(
-                child: CustomButton(text: AppStrings.login, onPress: () {}),
+                child: CustomButton(
+                  text: AppStrings.login,
+                  onPress: () async {
+                    await authProvider.login(
+                      email: emailController.text.trim(),
+                      password: passwordController.text.trim(),
+                      context: context,
+                      onError: (e) {
+                        FlutterToastr.show(e, context, duration: 3);
+                      },
+                    );
+                  },
+                ),
               ),
             ],
           ),

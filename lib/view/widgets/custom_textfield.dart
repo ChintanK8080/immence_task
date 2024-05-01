@@ -7,8 +7,10 @@ class CustomTextfield extends StatefulWidget {
       required this.text,
       required this.hintText,
       this.trailing,
-      this.isObsecure = false});
+      this.isObsecure = false,
+      required this.controller});
   final String text;
+  final TextEditingController controller;
   final String hintText;
   final Widget? trailing;
   final bool isObsecure;
@@ -36,6 +38,7 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         SizedBox(
           height: 41,
           child: TextField(
+            controller: widget.controller,
             obscureText: widget.isObsecure,
             textAlignVertical: TextAlignVertical.bottom,
             decoration: InputDecoration(

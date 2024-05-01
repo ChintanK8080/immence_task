@@ -6,7 +6,7 @@ import 'package:immence_task/app_constants/app_colors.dart';
 import 'package:immence_task/app_constants/app_strings.dart';
 import 'package:immence_task/app_constants/app_text_style.dart';
 import 'package:immence_task/models/auth_provider.dart';
-import 'package:immence_task/view/login_page.dart';
+import 'package:immence_task/models/users_provider.dart';
 import 'package:immence_task/view/widgets/profile_tile.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +20,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   TabController? tabController;
+
   @override
   void initState() {
     tabController = TabController(length: 2, vsync: this);
@@ -28,6 +29,9 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    UserProvider userProvider = Provider.of<UserProvider>(context);
+    userProvider.getAllUserData();
     return Scaffold(
       body: SafeArea(
         child: TabBarView(
@@ -65,54 +69,45 @@ class _HomePageState extends State<HomePage>
                 ),
                 Flexible(
                   child: ListView.separated(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) => DecoratedBox(
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.1),
-                                  spreadRadius: 2,
-                                  blurRadius: 5,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: GestureDetector(
-                              onTap: () async {
-                                final authService = Provider.of<AuthProvider>(
-                                    context,
-                                    listen: false);
-                                final userCredential = await authService.login(
-                                    "chintank8080@gmail.com", "12345678");
-                              },
-                              child: ListTile(
-                                tileColor: AppColors.white,
-                                title: const Text(
-                                  "John Jacob",
-                                  style: AppTextStyle.headingText3,
-                                ),
-                                subtitle: const Text(
-                                  "Johnjcobe@gmail.com",
-                                  style: AppTextStyle.hintStyle,
-                                ),
-                                leading: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: AppColors.primaryColor
-                                          .withOpacity(0.1)),
-                                  child: Text(
-                                    "L",
-                                    style: AppTextStyle.headingText3.copyWith(
-                                      color: AppColors.primaryColor,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) => DecoratedBox(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: ListTile(
+                        tileColor: AppColors.white,
+                        title: Text(
+                          userProvider.userDataList[index]["name"],
+                          style: AppTextStyle.headingText3,
+                        ),
+                        subtitle: Text(
+                          userProvider.userDataList[index]["email"],
+                          style: AppTextStyle.hintStyle,
+                        ),
+                        leading: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.primaryColor.withOpacity(0.1)),
+                          child: Text(
+                            "L",
+                            style: AppTextStyle.headingText3.copyWith(
+                              color: AppColors.primaryColor,
                             ),
                           ),
-                      separatorBuilder: (context, index) => Container(),
-                      itemCount: 5),
+                        ),
+                      ),
+                    ),
+                    separatorBuilder: (context, index) => Container(),
+                    itemCount: userProvider.userDataList.length,
+                  ),
                 )
               ],
             ),
@@ -157,12 +152,8 @@ class _HomePageState extends State<HomePage>
                 ProfileTile(
                   prefix: "Log out",
                   suffixWidget: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                            builder: (context) => const LoginPage(),
-                          ),
-                          (route) => false);
+                    onTap: () async {
+                      authProvider.logout(context);
                     },
                     child: const Icon(
                       Icons.logout,

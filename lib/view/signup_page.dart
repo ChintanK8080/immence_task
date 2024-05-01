@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:immence_task/app_constants/app_colors.dart';
 import 'package:immence_task/app_constants/app_strings.dart';
 import 'package:immence_task/app_constants/app_text_style.dart';
@@ -6,6 +7,9 @@ import 'package:immence_task/view/login_page.dart';
 import 'package:immence_task/view/widgets/custom_button.dart';
 import 'package:immence_task/view/widgets/custom_textfield.dart';
 import 'package:immence_task/view/widgets/remember_me_checkbox.dart';
+import 'package:provider/provider.dart';
+
+import '../models/auth_provider.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -16,6 +20,10 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   bool isChecked = false;
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final phoneNumberController = TextEditingController();
+  final passwordController = TextEditingController();
 
   _notify([Function? function]) {
     if (mounted) {
@@ -47,28 +55,32 @@ class _SignUpPageState extends State<SignUpPage> {
               const SizedBox(
                 height: 25,
               ),
-              const CustomTextfield(
+              CustomTextfield(
+                controller: nameController,
                 text: AppStrings.name,
                 hintText: AppStrings.nameHint,
               ),
               const SizedBox(
                 height: 9,
               ),
-              const CustomTextfield(
+              CustomTextfield(
+                controller: emailController,
                 text: AppStrings.emailAddress,
                 hintText: AppStrings.emailAddressHint,
               ),
               const SizedBox(
                 height: 9,
               ),
-              const CustomTextfield(
+              CustomTextfield(
+                controller: phoneNumberController,
                 text: AppStrings.phone,
                 hintText: AppStrings.phoneHint,
               ),
               const SizedBox(
                 height: 9,
               ),
-              const CustomTextfield(
+              CustomTextfield(
+                controller: passwordController,
                 text: AppStrings.password,
                 hintText: AppStrings.passwordHint,
               ),
@@ -86,7 +98,26 @@ class _SignUpPageState extends State<SignUpPage> {
                 height: 28,
               ),
               Flexible(
-                child: CustomButton(text: AppStrings.signUp, onPress: () {}),
+                child: CustomButton(
+                  text: AppStrings.signUp,
+                  onPress: () async {
+                    final authService =
+                        Provider.of<AuthProvider>(context, listen: false);
+                    await authService.createNewUser(
+                      context: context,
+                      name: nameController.text.trim(),
+                      phone: phoneNumberController.text.trim(),
+                      email: emailController.text.trim(),
+                      password: passwordController.text.trim(),
+                      onError: (String error) {
+                        FlutterToastr.show(
+                          error,
+                          context,
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ],
           ),
@@ -97,9 +128,11 @@ class _SignUpPageState extends State<SignUpPage> {
         alignment: Alignment.center,
         child: GestureDetector(
           onTap: () {
-            Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-              builder: (context) => const LoginPage(),
-            ),(route)=>false);
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => const LoginPage(),
+                ),
+                (route) => false);
           },
           child: RichText(
             text: TextSpan(
