@@ -2,10 +2,8 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:immence_task/models/users_provider.dart';
 import 'package:immence_task/view/home_page.dart';
 import 'package:immence_task/view/login_page.dart';
-import 'package:provider/provider.dart';
 
 class AuthProvider with ChangeNotifier {
   Future<UserCredential?> createNewUser(
@@ -14,6 +12,7 @@ class AuthProvider with ChangeNotifier {
       required String phone,
       required String name,
       required BuildContext context,
+      required Function(String email, String phone, String name) onSuccess,
       required Function(String error) onError}) async {
     try {
       final credential =
@@ -22,12 +21,11 @@ class AuthProvider with ChangeNotifier {
         password: password,
       );
       if (credential.user != null) {
-        if (name.trim().isNotEmpty ?? false) {
+        if (name.trim().isNotEmpty) {
           credential.user!.updateDisplayName(name.trim());
         }
       }
-      UserProvider userProvider = Provider.of<UserProvider>(context);
-      userProvider.storeUserData(email: email, phone: phone, name: name);
+      onSuccess(email, phone, name);
       return credential;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
