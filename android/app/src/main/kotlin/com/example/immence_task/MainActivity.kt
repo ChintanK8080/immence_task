@@ -1,4 +1,4 @@
-package com.example.immence_task
+package com.immence.task
 
 import io.flutter.embedding.android.FlutterActivity
 

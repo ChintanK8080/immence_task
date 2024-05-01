@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "316673230940",
+    "project_id": "immence-task-bf91f",
+    "storage_bucket": "immence-task-bf91f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:316673230940:android:a51779f4e510b1da6e3e99",
+        "android_client_info": {
+          "package_name": "com.immence.task"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDceAFjdrmI3qH-Rz9IX2ct5Wv3Dbxa5o4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
