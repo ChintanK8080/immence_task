@@ -5,8 +5,10 @@ import 'package:immence_task/app_constants/app_assets.dart';
 import 'package:immence_task/app_constants/app_colors.dart';
 import 'package:immence_task/app_constants/app_strings.dart';
 import 'package:immence_task/app_constants/app_text_style.dart';
+import 'package:immence_task/models/auth_provider.dart';
 import 'package:immence_task/view/login_page.dart';
 import 'package:immence_task/view/widgets/profile_tile.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -75,26 +77,35 @@ class _HomePageState extends State<HomePage>
                                 ),
                               ],
                             ),
-                            child: ListTile(
-                              tileColor: AppColors.white,
-                              title: const Text(
-                                "John Jacob",
-                                style: AppTextStyle.headingText3,
-                              ),
-                              subtitle: const Text(
-                                "Johnjcobe@gmail.com",
-                                style: AppTextStyle.hintStyle,
-                              ),
-                              leading: Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: AppColors.primaryColor
-                                        .withOpacity(0.1)),
-                                child: Text(
-                                  "L",
-                                  style: AppTextStyle.headingText3.copyWith(
-                                    color: AppColors.primaryColor,
+                            child: GestureDetector(
+                              onTap: () async {
+                                final authService = Provider.of<AuthProvider>(
+                                    context,
+                                    listen: false);
+                                final userCredential = await authService.login(
+                                    "chintank8080@gmail.com", "12345678");
+                              },
+                              child: ListTile(
+                                tileColor: AppColors.white,
+                                title: const Text(
+                                  "John Jacob",
+                                  style: AppTextStyle.headingText3,
+                                ),
+                                subtitle: const Text(
+                                  "Johnjcobe@gmail.com",
+                                  style: AppTextStyle.hintStyle,
+                                ),
+                                leading: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppColors.primaryColor
+                                          .withOpacity(0.1)),
+                                  child: Text(
+                                    "L",
+                                    style: AppTextStyle.headingText3.copyWith(
+                                      color: AppColors.primaryColor,
+                                    ),
                                   ),
                                 ),
                               ),
