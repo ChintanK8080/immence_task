@@ -8,10 +8,13 @@ class AppStrings {
   static const login = "Login";
   static const immence = "immence";
   static const name = "Name";
+  static const nameHint = "Please Enter Your Name";
   static const phone = "Phone Number";
   static const phoneHint = "Enter your phone number";
   static const emailAddress = "Email Address";
   static const emailAddressHint = "Enter your email";
   static const signUp = "Sign Up";
   static const dontHaveAnAccount = "Don't have an account?";
+  static const createAnAccount = "Create an account";
+  static const alreadyHaveAnAccount = "Already have an Account ?";
 }
