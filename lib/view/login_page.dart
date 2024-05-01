@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:immence_task/app_constants/app_colors.dart';
 import 'package:immence_task/app_constants/app_strings.dart';
 import 'package:immence_task/app_constants/app_text_style.dart';
+import 'package:immence_task/view/signup_page.dart';
 import 'package:immence_task/view/widgets/custom_button.dart';
 import 'package:immence_task/view/widgets/custom_textfield.dart';
 import 'package:immence_task/view/widgets/remember_me_checkbox.dart';
@@ -97,21 +98,28 @@ class _LoginPageState extends State<LoginPage> {
       bottomNavigationBar: Container(
         height: 50,
         alignment: Alignment.center,
-        child: RichText(
-          text: TextSpan(
-            children: [
-              const TextSpan(
-                text: AppStrings.dontHaveAnAccount,
-                style: AppTextStyle.hintStyle,
-              ),
-              const TextSpan(text: "  "),
-              TextSpan(
-                text: AppStrings.signUp,
-                style: AppTextStyle.buttonText.copyWith(
-                  color: AppColors.primaryColor,
+        child: GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const SignUpPage(),
+            ));
+          },
+          child: RichText(
+            text: TextSpan(
+              children: [
+                const TextSpan(
+                  text: AppStrings.dontHaveAnAccount,
+                  style: AppTextStyle.hintStyle,
                 ),
-              ),
-            ],
+                const TextSpan(text: "  "),
+                TextSpan(
+                  text: AppStrings.signUp,
+                  style: AppTextStyle.buttonText.copyWith(
+                    color: AppColors.primaryColor,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

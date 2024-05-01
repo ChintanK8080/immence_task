@@ -14,6 +14,7 @@ class AppStrings {
   static const emailAddress = "Email Address";
   static const emailAddressHint = "Enter your email";
   static const signUp = "Sign Up";
+  static const users = "Users";
   static const dontHaveAnAccount = "Don't have an account?";
   static const createAnAccount = "Create an account";
   static const alreadyHaveAnAccount = "Already have an Account ?";
