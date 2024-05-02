@@ -3,15 +3,16 @@ import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:immence_task/app_constants/app_colors.dart';
 import 'package:immence_task/app_constants/app_strings.dart';
 import 'package:immence_task/app_constants/app_text_style.dart';
-import 'package:immence_task/models/users_provider.dart';
+import 'package:immence_task/models/user_model.dart';
 import 'package:immence_task/view/home_page.dart';
 import 'package:immence_task/view/login_page.dart';
 import 'package:immence_task/view/widgets/custom_button.dart';
 import 'package:immence_task/view/widgets/custom_textfield.dart';
 import 'package:immence_task/view/widgets/remember_me_checkbox.dart';
+import 'package:immence_task/view_models/users_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../models/auth_provider.dart';
+import '../view_models/auth_provider.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -107,17 +108,17 @@ class _SignUpPageState extends State<SignUpPage> {
                         Provider.of<AuthProvider>(context, listen: false);
                     await authService.createNewUser(
                       context: context,
-                      name: nameController.text.trim(),
-                      phone: phoneNumberController.text.trim(),
-                      email: emailController.text.trim(),
+                      user: UserModel(
+                        name: nameController.text.trim(),
+                        phone: phoneNumberController.text.trim(),
+                        email: emailController.text.trim(),
+                      ),
                       password: passwordController.text.trim(),
-                      onSuccess: (email, phone, name) async {
+                      onSuccess: (user) async {
                         UserProvider userProvider =
                             Provider.of<UserProvider>(context, listen: false);
                         await userProvider.storeUserData(
-                          email: email,
-                          phone: phone,
-                          name: name,
+                          user: user,
                           onSuccess: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(

@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:immence_task/models/auth_provider.dart';
-import 'package:immence_task/models/users_provider.dart';
+import 'package:immence_task/view_models/auth_provider.dart';
+import 'package:immence_task/view_models/users_provider.dart';
 import 'package:immence_task/view/login_page.dart';
 import 'package:provider/provider.dart';
 

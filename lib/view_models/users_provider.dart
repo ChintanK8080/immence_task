@@ -1,33 +1,23 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:immence_task/models/user_model.dart';
+import 'package:immence_task/utilities/utility_methods.dart';
 
 class UserProvider with ChangeNotifier {
-  List<Map<String, dynamic>> userDataList = [];
-  String? name;
-  String? phone;
-  String? email;
+  List<UserModel> userDataList = [];
+  UserModel? user;
 
   Future<void> storeUserData({
-    required String name,
-    required String email,
-    required String phone,
+    required UserModel user,
     required Function() onSuccess,
   }) async {
     try {
       CollectionReference usersListRef =
           FirebaseFirestore.instance.collection('users');
-      final userData = {
-        'name': name,
-        'email': email,
-        'phone': phone,
-      };
-      await usersListRef.add(userData);
-      SharedPreferences pref = await SharedPreferences.getInstance();
-      await pref.setString("UserData", jsonEncode(userData));
+      await usersListRef.add(user.toJson());
+      await Utility.setUsers(user);
       onSuccess();
 
       log('User data stored successfully!');
@@ -37,7 +27,7 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> getAllUserData() async {
-    List<Map<String, dynamic>> tempUsersList = [];
+    List<UserModel> tempUsersList = [];
     try {
       CollectionReference userDataRef =
           FirebaseFirestore.instance.collection('users');
@@ -45,8 +35,11 @@ class UserProvider with ChangeNotifier {
       QuerySnapshot querySnapshot = await userDataRef.get();
 
       for (var doc in querySnapshot.docs) {
-        Object? userData = doc.data();
-        tempUsersList.add(userData as Map<String, dynamic>);
+        final userData = UserModel.fromJson(doc.data() as Map<String, dynamic>);
+        if (user?.email != null && user!.email == userData.email) {
+          user = userData;
+        }
+        tempUsersList.add(userData);
       }
       userDataList = tempUsersList;
       notifyListeners();
@@ -56,13 +49,9 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<void> getCurrentUserData() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    final userData = pref.getString("UserData");
+    final userData = await Utility.getUsers();
     if (userData != null) {
-      final userDataMap = jsonDecode(userData);
-      name = userDataMap["name"];
-      phone = userDataMap["phone"];
-      email = userDataMap["email"];
+      user = userData;
     }
     notifyListeners();
   }

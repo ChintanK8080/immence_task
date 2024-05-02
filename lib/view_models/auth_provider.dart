@@ -1,34 +1,32 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:immence_task/models/user_model.dart';
+import 'package:immence_task/utilities/utility_methods.dart';
 import 'package:immence_task/view/home_page.dart';
 import 'package:immence_task/view/login_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider with ChangeNotifier {
   Future<UserCredential?> createNewUser({
-    required String email,
+    required UserModel user,
     required String password,
-    required String phone,
-    required String name,
     required BuildContext context,
-    required Function(String email, String phone, String name) onSuccess,
+    required Function(UserModel user) onSuccess,
     required Function(String error) onError,
   }) async {
     try {
       final credential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
+        email: user.email,
         password: password,
       );
       if (credential.user != null) {
-        if (name.trim().isNotEmpty) {
-          credential.user!.updateDisplayName(name.trim());
+        if (user.name.trim().isNotEmpty) {
+          credential.user!.updateDisplayName(user.name.trim());
         }
       }
-      onSuccess(email, phone, name);
+      onSuccess(user);
       return credential;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -51,17 +49,10 @@ class AuthProvider with ChangeNotifier {
       final credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       if (credential.user != null) {
-        SharedPreferences pref = await SharedPreferences.getInstance();
-        await pref.setString(
-          "UserData",
-          jsonEncode(
-            {
-              "name": credential.user?.displayName,
-              "email": credential.user?.email,
-              "phone": credential.user?.phoneNumber
-            },
-          ),
-        );
+        await Utility.setUsers(UserModel(
+            name: credential.user?.displayName ?? '',
+            phone: credential.user?.phoneNumber ?? '',
+            email: credential.user?.email ?? ''));
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
               builder: (context) => const HomePage(),
@@ -87,8 +78,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
-    final pref = await SharedPreferences.getInstance();
-    await pref.clear();
+    await Utility.clearPref();
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (context) => const LoginPage(),

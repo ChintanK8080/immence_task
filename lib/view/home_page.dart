@@ -7,11 +7,10 @@ import 'package:immence_task/app_constants/app_assets.dart';
 import 'package:immence_task/app_constants/app_colors.dart';
 import 'package:immence_task/app_constants/app_strings.dart';
 import 'package:immence_task/app_constants/app_text_style.dart';
-import 'package:immence_task/models/auth_provider.dart';
-import 'package:immence_task/models/users_provider.dart';
 import 'package:immence_task/view/widgets/profile_tile.dart';
+import 'package:immence_task/view_models/auth_provider.dart';
+import 'package:immence_task/view_models/users_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,19 +32,11 @@ class _HomePageState extends State<HomePage>
     super.initState();
   }
 
-  // getUserdata() async {
-  //   SharedPreferences pref = await SharedPreferences.getInstance();
-   
-  //   final userData = pref.getString("UserData");
-  //   log(userData ?? 'llll');
-  // }
-
   @override
   Widget build(BuildContext context) {
-    // getUserdata();
     UserProvider userProvider = Provider.of<UserProvider>(context);
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
-    log(userProvider.name.toString());
+    log(userProvider.user?.name ?? '');
     return Scaffold(
       body: SafeArea(
         child: TabBarView(
@@ -98,11 +89,11 @@ class _HomePageState extends State<HomePage>
                       child: ListTile(
                         tileColor: AppColors.white,
                         title: Text(
-                          userProvider.userDataList[index]["name"],
+                          userProvider.userDataList[index].name,
                           style: AppTextStyle.headingText3,
                         ),
                         subtitle: Text(
-                          userProvider.userDataList[index]["email"],
+                          userProvider.userDataList[index].email,
                           style: AppTextStyle.hintStyle,
                         ),
                         leading: Container(
@@ -143,7 +134,7 @@ class _HomePageState extends State<HomePage>
                   height: 12,
                 ),
                 Text(
-                  userProvider.name ?? '',
+                  userProvider.user?.name ?? '',
                   style: AppTextStyle.headingText2,
                 ),
                 const SizedBox(
@@ -151,14 +142,14 @@ class _HomePageState extends State<HomePage>
                 ),
                 ProfileTile(
                   prefix: "Email",
-                  suffixText: userProvider.email ?? '',
+                  suffixText: userProvider.user?.email ?? '',
                 ),
                 const SizedBox(
                   height: 10,
                 ),
                 ProfileTile(
                   prefix: "Phone No.",
-                  suffixText: userProvider.phone ?? '',
+                  suffixText: userProvider.user?.phone ?? '',
                 ),
                 const SizedBox(
                   height: 10,
