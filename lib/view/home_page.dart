@@ -44,140 +44,142 @@ class _HomePageState extends State<HomePage>
     AuthProvider authProvider = Provider.of<AuthProvider>(context);
     log(userProvider.user?.name ?? '');
     return Scaffold(
-      body: SafeArea(
-        child: TabBarView(
-          controller: tabController,
-          children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 31),
-                    child:
-                        Text(AppStrings.immence, style: AppTextStyle.titleText),
-                  ),
-                ),
-                const SizedBox(
-                  height: 41,
-                ),
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      left: 31,
-                    ),
-                    child: Text(
-                      AppStrings.users,
-                      style: AppTextStyle.headingText,
+        body: SafeArea(
+          child: TabBarView(
+            controller: tabController,
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 31),
+                      child: Text(AppStrings.immence,
+                          style: AppTextStyle.titleText),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 41,
-                ),
-                Flexible(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) => DecoratedBox(
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
+                  const SizedBox(
+                    height: 41,
+                  ),
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        left: 31,
                       ),
-                      child: ListTile(
-                        tileColor: AppColors.white,
-                        title: Text(
-                          userProvider.userDataList[index].name,
-                          style: AppTextStyle.headingText3,
+                      child: Text(
+                        AppStrings.users,
+                        style: AppTextStyle.headingText,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 41,
+                  ),
+                  Flexible(
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) => DecoratedBox(
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.1),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
                         ),
-                        subtitle: Text(
-                          userProvider.userDataList[index].email,
-                          style: AppTextStyle.hintStyle,
-                        ),
-                        leading: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColors.primaryColor.withOpacity(0.1)),
-                          child: Text(
-                            "L",
-                            style: AppTextStyle.headingText3.copyWith(
-                              color: AppColors.primaryColor,
+                        child: ListTile(
+                          tileColor: AppColors.white,
+                          title: Text(
+                            userProvider.userDataList[index].name,
+                            style: AppTextStyle.headingText3,
+                          ),
+                          subtitle: Text(
+                            userProvider.userDataList[index].email,
+                            style: AppTextStyle.hintStyle,
+                          ),
+                          leading: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppColors.primaryColor.withOpacity(0.1)),
+                            child: Text(
+                              userProvider
+                                  .userDataList[index].name.characters.first,
+                              style: AppTextStyle.headingText3.copyWith(
+                                color: AppColors.primaryColor,
+                              ),
                             ),
                           ),
                         ),
                       ),
+                      separatorBuilder: (context, index) => Container(),
+                      itemCount: userProvider.userDataList.length,
                     ),
-                    separatorBuilder: (context, index) => Container(),
-                    itemCount: userProvider.userDataList.length,
-                  ),
-                )
-              ],
-            ),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  height: 141,
-                  margin: const EdgeInsets.only(top: 20),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.primaryColor.withOpacity(0.05)),
-                  child: SvgPicture.asset(
-                    AppAssets.appLogo,
-                  ),
-                ),
-                const SizedBox(
-                  height: 12,
-                ),
-                Text(
-                  userProvider.user?.name ?? '',
-                  style: AppTextStyle.headingText2,
-                ),
-                const SizedBox(
-                  height: 19,
-                ),
-                ProfileTile(
-                  prefix: "Email",
-                  suffixText: userProvider.user?.email ?? '',
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                ProfileTile(
-                  prefix: "Phone No.",
-                  suffixText: userProvider.user?.phone ?? '',
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                ProfileTile(
-                  prefix: "Log out",
-                  suffixWidget: GestureDetector(
-                    onTap: () async {
-                      authProvider.logout(context);
-                    },
-                    child: const Icon(
-                      Icons.logout,
-                      color: AppColors.primaryColor,
+                  )
+                ],
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    height: 141,
+                    margin: const EdgeInsets.only(top: 20),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.primaryColor.withOpacity(0.05)),
+                    child: SvgPicture.asset(
+                      AppAssets.appLogo,
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  Text(
+                    userProvider.user?.name ?? '',
+                    style: AppTextStyle.headingText2,
+                  ),
+                  const SizedBox(
+                    height: 19,
+                  ),
+                  ProfileTile(
+                    prefix: "Email",
+                    suffixText: userProvider.user?.email ?? '',
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ProfileTile(
+                    prefix: "Phone No.",
+                    suffixText: userProvider.user?.phone ?? '',
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ProfileTile(
+                    prefix: "Log out",
+                    suffixWidget: GestureDetector(
+                      onTap: () async {
+                        authProvider.logout(context);
+                      },
+                      child: const Icon(
+                        Icons.logout,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-      ),
-      bottomNavigationBar: BottomTabBar(tabController: tabController,)
-    );
+        bottomNavigationBar: BottomTabBar(
+          tabController: tabController,
+        ));
   }
 }
