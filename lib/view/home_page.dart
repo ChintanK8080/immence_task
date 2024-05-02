@@ -1,12 +1,13 @@
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:immence_task/app_constants/app_assets.dart';
 import 'package:immence_task/app_constants/app_colors.dart';
 import 'package:immence_task/app_constants/app_strings.dart';
 import 'package:immence_task/app_constants/app_text_style.dart';
+import 'package:immence_task/view/widgets/bottom_tabbar.dart';
 import 'package:immence_task/view/widgets/profile_tile.dart';
 import 'package:immence_task/view_models/auth_provider.dart';
 import 'package:immence_task/view_models/users_provider.dart';
@@ -26,6 +27,11 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     tabController = TabController(length: 2, vsync: this);
+    tabController?.addListener(() {
+      if (mounted) {
+        setState(() {});
+      }
+    });
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     userProvider.getAllUserData();
     userProvider.getCurrentUserData();
@@ -171,20 +177,7 @@ class _HomePageState extends State<HomePage>
           ],
         ),
       ),
-      bottomNavigationBar: TabBar(
-        controller: tabController,
-        padding: const EdgeInsets.only(bottom: 10, top: 10),
-        tabs: const [
-          Icon(
-            CupertinoIcons.group,
-            color: AppColors.primaryColor,
-          ),
-          Icon(
-            CupertinoIcons.person,
-            color: AppColors.primaryColor,
-          )
-        ],
-      ),
+      bottomNavigationBar: BottomTabBar(tabController: tabController,)
     );
   }
 }
