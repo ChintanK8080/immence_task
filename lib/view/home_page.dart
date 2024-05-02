@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,6 +11,7 @@ import 'package:immence_task/models/auth_provider.dart';
 import 'package:immence_task/models/users_provider.dart';
 import 'package:immence_task/view/widgets/profile_tile.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,14 +27,25 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     tabController = TabController(length: 2, vsync: this);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    userProvider.getAllUserData();
+    userProvider.getCurrentUserData();
     super.initState();
   }
 
+  // getUserdata() async {
+  //   SharedPreferences pref = await SharedPreferences.getInstance();
+   
+  //   final userData = pref.getString("UserData");
+  //   log(userData ?? 'llll');
+  // }
+
   @override
   Widget build(BuildContext context) {
-    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    // getUserdata();
     UserProvider userProvider = Provider.of<UserProvider>(context);
-    userProvider.getAllUserData();
+    AuthProvider authProvider = Provider.of<AuthProvider>(context);
+    log(userProvider.name.toString());
     return Scaffold(
       body: SafeArea(
         child: TabBarView(
@@ -128,23 +142,23 @@ class _HomePageState extends State<HomePage>
                 const SizedBox(
                   height: 12,
                 ),
-                const Text(
-                  "John Jacobe",
+                Text(
+                  userProvider.name ?? '',
                   style: AppTextStyle.headingText2,
                 ),
                 const SizedBox(
                   height: 19,
                 ),
-                const ProfileTile(
+                ProfileTile(
                   prefix: "Email",
-                  suffixText: "johndoe@immence.com",
+                  suffixText: userProvider.email ?? '',
                 ),
                 const SizedBox(
                   height: 10,
                 ),
-                const ProfileTile(
+                ProfileTile(
                   prefix: "Phone No.",
-                  suffixText: "+91 8200237575",
+                  suffixText: userProvider.phone ?? '',
                 ),
                 const SizedBox(
                   height: 10,

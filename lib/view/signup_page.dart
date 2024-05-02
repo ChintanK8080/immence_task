@@ -4,6 +4,7 @@ import 'package:immence_task/app_constants/app_colors.dart';
 import 'package:immence_task/app_constants/app_strings.dart';
 import 'package:immence_task/app_constants/app_text_style.dart';
 import 'package:immence_task/models/users_provider.dart';
+import 'package:immence_task/view/home_page.dart';
 import 'package:immence_task/view/login_page.dart';
 import 'package:immence_task/view/widgets/custom_button.dart';
 import 'package:immence_task/view/widgets/custom_textfield.dart';
@@ -110,11 +111,21 @@ class _SignUpPageState extends State<SignUpPage> {
                       phone: phoneNumberController.text.trim(),
                       email: emailController.text.trim(),
                       password: passwordController.text.trim(),
-                      onSuccess: (email, phone, name) {
+                      onSuccess: (email, phone, name) async {
                         UserProvider userProvider =
-                            Provider.of<UserProvider>(context);
-                        userProvider.storeUserData(
-                            email: email, phone: phone, name: name);
+                            Provider.of<UserProvider>(context, listen: false);
+                        await userProvider.storeUserData(
+                          email: email,
+                          phone: phone,
+                          name: name,
+                          onSuccess: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => const HomePage(),
+                              ),
+                            );
+                          },
+                        );
                       },
                       onError: (String error) {
                         FlutterToastr.show(error, context, duration: 3);
