@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:immence_task/app_constants/app_colors.dart';
 import 'package:immence_task/app_constants/app_strings.dart';
 import 'package:immence_task/app_constants/app_text_style.dart';
@@ -106,30 +105,37 @@ class _SignUpPageState extends State<SignUpPage> {
                   onPress: () async {
                     final authService =
                         Provider.of<AuthProvider>(context, listen: false);
-                    await authService.createNewUser(
-                      context: context,
-                      user: UserModel(
-                        name: nameController.text.trim(),
-                        phone: phoneNumberController.text.trim(),
-                        email: emailController.text.trim(),
-                      ),
+                    authService.validator(
+                      context,
+                      name: nameController.text.trim(),
+                      email: emailController.text.trim(),
                       password: passwordController.text.trim(),
-                      onSuccess: (user) async {
-                        UserProvider userProvider =
-                            Provider.of<UserProvider>(context, listen: false);
-                        await userProvider.storeUserData(
-                          user: user,
-                          onSuccess: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const HomePage(),
-                              ),
+                      phoneNumber: phoneNumberController.text.trim(),
+                      onSuccess: () async {
+                        await authService.createNewUser(
+                          context: context,
+                          user: UserModel(
+                            name: nameController.text.trim(),
+                            phone: phoneNumberController.text.trim(),
+                            email: emailController.text.trim(),
+                          ),
+                          password: passwordController.text.trim(),
+                          onSuccess: (user) async {
+                            UserProvider userProvider =
+                                Provider.of<UserProvider>(context,
+                                    listen: false);
+                            await userProvider.storeUserData(
+                              user: user,
+                              onSuccess: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => const HomePage(),
+                                  ),
+                                );
+                              },
                             );
                           },
                         );
-                      },
-                      onError: (String error) {
-                        FlutterToastr.show(error, context, duration: 3);
                       },
                     );
                   },

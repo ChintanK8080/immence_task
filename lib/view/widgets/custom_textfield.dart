@@ -37,7 +37,10 @@ class _CustomTextfieldState extends State<CustomTextfield> {
         ),
         SizedBox(
           height: 41,
-          child: TextField(
+          child: TextFormField(
+            validator: (value) {
+              return "enter valid data";
+            },
             controller: widget.controller,
             obscureText: widget.isObsecure,
             textAlignVertical: TextAlignVertical.bottom,

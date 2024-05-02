@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:immence_task/models/user_model.dart';
 import 'package:immence_task/utilities/utility_methods.dart';
 import 'package:immence_task/view/home_page.dart';
@@ -13,7 +14,6 @@ class AuthProvider with ChangeNotifier {
     required String password,
     required BuildContext context,
     required Function(UserModel user) onSuccess,
-    required Function(String error) onError,
   }) async {
     try {
       final credential =
@@ -30,21 +30,22 @@ class AuthProvider with ChangeNotifier {
       return credential;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        onError('The password provided is too weak.');
+        FlutterToastr.show('The password provided is too weak.', context);
       } else if (e.code == 'email-already-in-use') {
-        onError('The account already exists for that email.');
+        FlutterToastr.show(
+            'The account already exists for that email.', context);
       }
     } catch (e) {
-      onError(e.toString());
+      FlutterToastr.show(e.toString(), context);
     }
     return null;
   }
 
-  Future<void> login(
-      {required String email,
-      required String password,
-      required BuildContext context,
-      required Function(String error) onError}) async {
+  Future<void> login({
+    required String email,
+    required String password,
+    required BuildContext context,
+  }) async {
     try {
       final credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
@@ -61,15 +62,15 @@ class AuthProvider with ChangeNotifier {
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        onError(e.message ?? '');
+        FlutterToastr.show(e.message ?? '', context, duration: 3);
       } else if (e.code == 'wrong-password') {
-        onError(e.message ?? '');
+        FlutterToastr.show(e.message ?? '', context, duration: 3);
       } else if (e.code == "invalid-credential") {
-        onError(e.message ?? '');
+        FlutterToastr.show(e.message ?? '', context, duration: 3);
       } else if (e.code == "invalid-email") {
-        onError(e.message ?? '');
+        FlutterToastr.show(e.message ?? '', context, duration: 3);
       } else if (e.code == "user-disabled") {
-        onError(e.message ?? '');
+        FlutterToastr.show(e.message ?? '', context, duration: 3);
       }
     } catch (e) {
       log(e.toString());
@@ -84,5 +85,37 @@ class AuthProvider with ChangeNotifier {
           builder: (context) => const LoginPage(),
         ),
         (route) => false);
+  }
+
+  void validator(BuildContext context,
+      {required String email,
+      required String password,
+      String? name,
+      String? phoneNumber,
+      required Function() onSuccess}) {
+    if (name != null && name.isEmpty) {
+      FlutterToastr.show(
+        "Please enter valid name",
+        context,
+      );
+    } else if (email.isEmpty || !Utility.isValidEmail(email)) {
+      FlutterToastr.show(
+        "Please enter valid email",
+        context,
+      );
+    } else if (phoneNumber != null &&
+        (phoneNumber.length < 10 || phoneNumber.length < 10)) {
+      FlutterToastr.show(
+        "Phone Number must be between 10 to 12 digits",
+        context,
+      );
+    } else if (password.length < 8) {
+      FlutterToastr.show(
+        "Password must be contain at least 8 characters",
+        context,
+      );
+    } else {
+      onSuccess();
+    }
   }
 }

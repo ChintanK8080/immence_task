@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:immence_task/app_constants/app_colors.dart';
 import 'package:immence_task/app_constants/app_strings.dart';
 import 'package:immence_task/app_constants/app_text_style.dart';
-import 'package:immence_task/view_models/auth_provider.dart';
 import 'package:immence_task/view/signup_page.dart';
 import 'package:immence_task/view/widgets/custom_button.dart';
 import 'package:immence_task/view/widgets/custom_textfield.dart';
 import 'package:immence_task/view/widgets/remember_me_checkbox.dart';
+import 'package:immence_task/view_models/auth_provider.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -20,6 +19,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool isChecked = false;
   bool isObsecure = true;
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -100,12 +100,16 @@ class _LoginPageState extends State<LoginPage> {
                 child: CustomButton(
                   text: AppStrings.login,
                   onPress: () async {
-                    await authProvider.login(
+                    authProvider.validator(
+                      context,
                       email: emailController.text.trim(),
                       password: passwordController.text.trim(),
-                      context: context,
-                      onError: (e) {
-                        FlutterToastr.show(e, context, duration: 3);
+                      onSuccess: () async {
+                        await authProvider.login(
+                          context: context,
+                          email: emailController.text.trim(),
+                          password: passwordController.text.trim(),
+                        );
                       },
                     );
                   },
