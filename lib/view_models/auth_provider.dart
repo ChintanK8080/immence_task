@@ -118,4 +118,22 @@ class AuthProvider with ChangeNotifier {
       onSuccess();
     }
   }
+
+  Future<void> authenticateUser(BuildContext context) async {
+    await Future.delayed(const Duration(seconds: 3));
+    final user = await Utility.getUsers();
+    if (user != null) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ),
+          (route) => false);
+    } else {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const LoginPage(),
+          ),
+          (route) => false);
+    }
+  }
 }
